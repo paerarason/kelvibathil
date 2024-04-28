@@ -1,5 +1,5 @@
 use gtk::prelude::*;
-use gtk::{Button, Grid, Label, Window, WindowType, ScrolledWindow, TextView, PolicyType};
+use gtk::{Button, Grid, Label, Window, WindowType ,  ScrolledWindow, TextView, PolicyType};
 
 fn main() {
     // Initialize GTK application
@@ -32,6 +32,16 @@ fn main() {
     // Add the text view to the scrolled window
     scrolled_window.add(&text_view);
 
+   // let split_container = SplitContainer::new( gtk::Orientation::Horizontal );
+    let label3 = gtk::Label::new(Some("Label 3"));
+    let label4 = gtk::Label::new(Some("Label 4"));
+    let paned = gtk::Paned::new(gtk::Orientation::Horizontal);
+
+    // Add widgets to the paned container and allow resizing
+    paned.pack1(&label3, true, true);
+    paned.pack2(&label4, true, true);
+
+
     // Attach widgets to grid cells
     grid.attach(&label1, 0, 0, 1, 1);
     grid.attach_next_to(&label2, Some(&label1), gtk::PositionType::Bottom, 1, 1);
@@ -40,8 +50,9 @@ fn main() {
     grid.attach_next_to(&scrolled_window, Some(&button2), gtk::PositionType::Bottom, 1, 1);
 
     // Add the grid to the window
+    window.add(&paned);
     window.add(&grid);
-
+    
     // Show all widgets
     window.show_all();
 
