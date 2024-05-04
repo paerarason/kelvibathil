@@ -1,40 +1,40 @@
-extern crate gtk;
 use gtk::prelude::*;
-use gtk::{Button, Window, WindowType, Entry};
+use gtk::{Application, ApplicationWindow, Button,Entry,Label};
 
 fn main() {
-    // Initialize GTK application
-    gtk::init().expect("Failed to initialize GTK.");
+    let application = Application::builder()
+        .application_id("com.example.FirstGtkApp")
+        .build();
 
-    // Create a new top-level window
-    let window = Window::new(WindowType::Toplevel);
-    window.set_title("KElvi bathil");
-    window.set_default_size(900, 450);
+    application.connect_activate(|app| {
+        let window = ApplicationWindow::builder()
+            .application(app)
+            .title("HTTP Client")
+            .default_width(350)
+            .default_height(70)
+            .build();
+        
+        let url=Entry ::builder();
+        let result=Label::builder();
+        let button = Button::with_label("Send");
 
-    // Create a new entry and button
-    let url = Entry::new();
-    let send = Button::with_label("send");
-    url.set_text("URL://");
+        let grid = gtk::Grid::new();
+        grid.set_row_spacing(5); // Add spacing between rows (optional)
+        grid.set_column_spacing(5); // Add spacing between columns (optional)
+        window.add(&grid);
+        button.connect_clicked(|_| {
+            let link=url.get_text().unwrap();
+            let body = reqwest::get("https://www.rust-lang.org")
+    .await?
+    .text()
+    .await?;
+        });
 
-    // Connect a callback to the entry to handle text changes
-    url.connect_changed(|entry| {
-        if let Some(text) = entry.get_text() {
-            println!("Entry text changed: {}", text);
-        }
+        grid.attach(&url, 0, 0, 1, 1); // (x, y, width, height)
+        grid.attach(&send, 1, 0, 1, 1); // Adjust positions as needed
+        grid.attach(&result, 0, 1, 2, 1);
+        window.show_all();
     });
 
-    let paned = gtk::Paned::new(gtk::Orientation::Horizontal);
-
-    // Add widgets to the paned container and allow resizing
-    paned.pack1(&url, true, true);
-    paned.pack2(&send, true, true);
-
-    // Add the paned container to the window
-    window.add(&paned);
-    
-    // Show all widgets
-    window.show_all();
-
-    // Start the GTK main event loop
-    gtk::main();
+    application.run();
 }
